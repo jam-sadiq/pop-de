@@ -323,9 +323,10 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         """
         rescale_val = rescale_factors_alpha[:-1]
         alpha_val = rescale_factors_alpha[-1]
-        # For symmetrization, make another copy of the value for the first symm dimension
+        # For 2-dim symmetrization, make another copy of the value for the first symm dimension
         # and insert it after this dim in the rescale array
-        if self.symm_dims is not None:
+        # For 1-dim symmetrization (reflection), no special rescale treatment needed?
+        if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescale_val[self.symm_dims[0]]
             rescale_val = np.insert(rescale_val, self.symm_dims[1], val_to_copy)
 
@@ -370,9 +371,10 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         """
         rescale_val = rescale_factors_alpha[:-1]
         alpha_val = rescale_factors_alpha[-1]
-        # For symmetrization, make another copy of the value for the first symm dimension
+        # For 2-dim symmetrization, make another copy of the value for the first symm dimension
         # and insert it after this dim in the rescale array
-        if self.symm_dims is not None:
+        # For 1-dim symmetrization (reflection), no special rescale treatment needed?
+        if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescale_val[self.symm_dims[0]]
             rescale_val = np.insert(rescale_val, self.symm_dims[1], val_to_copy)
 
@@ -424,15 +426,15 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         # Insert alpha at the end of the array
         initial_choices = np.insert(init_rescale, init_rescale.size, init_alpha)
 
-        # For symmetrization, check that the dimensions are treated the same and 
+        # For 2-dim symmetrization, check that the dimensions are treated the same and 
         # then remove one of them from the opt parameters
-        if self.symm_dims is not None:
+        # For 1-dim symmetrization (reflection), no special treatment needed ?
+        if self.symm_dims is not None and len(self.symm_dims) == 2:
             firstdim = self.symm_dims[0]; secondim = self.symm_dims[1]
             assert init_rescale[firstdim] == init_rescale[secondim]
             assert bounds[firstdim] == bounds[secondim]
             initial_choices = np.delete(initial_choices, secondim)
             bounds = list(bounds); bounds.pop(secondim)
-
         try:
             score_fn = {
                 'kfold_cv': self.kfold_cv_score,
@@ -452,8 +454,9 @@ class KDERescaleOptimization(AdaptiveBwKDE):
 
         # Set instance KDE parameters from the optimized results
         rescales = result.x[:-1]
-        # Symmetrization case: copy the rescale value from first dim to second
-        if self.symm_dims is not None:
+        # For 2-dim symmetrization: copy the rescale value from first dim to second
+        # For 1-dim symmetrization: no special treatment needed ?
+        if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescales[firstdim]
             rescales = np.insert(rescales, secondim, val_to_copy)
         self.set_rescale(rescales)
