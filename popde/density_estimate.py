@@ -131,23 +131,40 @@ class SimpleKernelDensityEstimation:
 
     def symmetrize_data(self, dims):
         """
-        Augment kde_data and weights with a copy exchanging values between the
-        two indexed dimensions.  Ex. m_1 <-> m_2 symmetry
+        Augment kde_data and weights with a copy applying symmetry operation.
+
+        Two modes:
+        - Two dimensions: Exchange values between the two indexed dimensions.
+            Ex. m_1 <-> m_2 symmetry
+        - One dimension: Reflect values across zero in that dimension.
+            Ex. ln(q) -> -ln(q) symmetry
         """
-        assert len(dims) == 2, \
-            f"Need exactly 2 indices for symmetrizing data, got {len(dims)}"
+        dims = list(dims) if not isinstance(dims, list) else dims
 
-        extra_data = []  # Build up 1-d arrays for the copy
-        for d in range(self.ndim):
-            if d == int(dims[0]):
-                 extra_data.append(self.kde_data[:, int(dims[1])])
-            elif d == int(dims[1]):
-                 extra_data.append(self.kde_data[:, int(dims[0])])
-            else:  # Leave other dimensions as they are
-                 extra_data.append(self.kde_data[:, d])
+        if len(dims) == 2:
+            # Original behavior: swap two dimensions
+            extra_data = []  # Build up 1-d arrays for the copy
+            for d in range(self.ndim):
+                if d == int(dims[0]):
+                    extra_data.append(self.kde_data[:, int(dims[1])])
+                elif d == int(dims[1]):
+                    extra_data.append(self.kde_data[:, int(dims[0])])
+                else:  # Leave other dimensions as they are
+                    extra_data.append(self.kde_data[:, d])
 
-        extra_data = np.vstack(extra_data).T  # Stick arrays together
-        assert(extra_data.shape == self.kde_data.shape), extra_data.shape
+            extra_data = np.vstack(extra_data).T  # Stick arrays together
+
+        elif len(dims) == 1:
+            # New behavior: reflect single dimension across zero
+            dim_idx = int(dims[0])
+            extra_data = self.kde_data.copy()
+            extra_data[:, dim_idx] = -extra_data[:, dim_idx]
+
+        else:
+            raise ValueError(
+                f"Need exactly 1 or 2 indices for symmetrizing data, got {len(dims)}")
+
+        assert extra_data.shape == self.kde_data.shape, extra_data.shape
         # Combine into one array and replace self.kde_data
         self.kde_data = np.vstack((self.kde_data, extra_data))
 
