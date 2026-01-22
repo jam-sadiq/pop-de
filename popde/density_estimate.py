@@ -1,6 +1,5 @@
 import numpy as np
 from . import transform_utils as transf
-import transform_utils as transf
 
 class SimpleKernelDensityEstimation:
     """
@@ -148,7 +147,7 @@ class SimpleKernelDensityEstimation:
             extra_data = []  # Build up 1-d arrays for the copy
             for d in range(self.ndim):
                 if d == d0:
-                    extra_data.append(self.kde_data[:, d1)])
+                    extra_data.append(self.kde_data[:, d1])
                 elif d == d1:
                     extra_data.append(self.kde_data[:, d0])
                 else:  # Leave other dimensions as they are
