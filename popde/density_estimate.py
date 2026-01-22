@@ -1,5 +1,6 @@
 import numpy as np
 from . import transform_utils as transf
+import transform_utils as transf
 
 class SimpleKernelDensityEstimation:
     """
@@ -139,10 +140,9 @@ class SimpleKernelDensityEstimation:
         - One dimension: Reflect values across zero in that dimension.
             Ex. ln(q) -> -ln(q) symmetry
         """
-        dims = list(dims) if not isinstance(dims, list) else dims
+        dims = list(dims)
 
-        if len(dims) == 2:
-            # Original behavior: swap two dimensions
+        if len(dims) == 2:  # Swap two dimensions
             extra_data = []  # Build up 1-d arrays for the copy
             for d in range(self.ndim):
                 if d == int(dims[0]):
@@ -154,9 +154,8 @@ class SimpleKernelDensityEstimation:
 
             extra_data = np.vstack(extra_data).T  # Stick arrays together
 
-        elif len(dims) == 1:
-            # New behavior: reflect single dimension across zero
-            dim_idx = int(dims[0])
+        elif len(dims) == 1:  # Reflect values across zero
+            dim_idx = dims[0]
             extra_data = self.kde_data.copy()
             extra_data[:, dim_idx] = -extra_data[:, dim_idx]
 
