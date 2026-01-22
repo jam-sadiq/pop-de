@@ -143,21 +143,23 @@ class SimpleKernelDensityEstimation:
         dims = list(dims)
 
         if len(dims) == 2:  # Swap two dimensions
+            d0 = int(dims[0]); d1 = int(dims[1])  # Only ints can be used for indexing
+            
             extra_data = []  # Build up 1-d arrays for the copy
             for d in range(self.ndim):
-                if d == int(dims[0]):
-                    extra_data.append(self.kde_data[:, int(dims[1])])
-                elif d == int(dims[1]):
-                    extra_data.append(self.kde_data[:, int(dims[0])])
+                if d == d0:
+                    extra_data.append(self.kde_data[:, d1)])
+                elif d == d1:
+                    extra_data.append(self.kde_data[:, d0])
                 else:  # Leave other dimensions as they are
                     extra_data.append(self.kde_data[:, d])
 
             extra_data = np.vstack(extra_data).T  # Stick arrays together
 
         elif len(dims) == 1:  # Reflect values across zero
-            dim_idx = dims[0]
+            d_id = int(dims[0])
             extra_data = self.kde_data.copy()
-            extra_data[:, dim_idx] = -extra_data[:, dim_idx]
+            extra_data[:, d_id] = -extra_data[:, d_id]
 
         else:
             raise ValueError(
