@@ -323,7 +323,7 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         """
         rescale_val = rescale_factors_alpha[:-1]
         alpha_val = rescale_factors_alpha[-1]
-        # For 2-dim symmetrization, make another copy of the value for the first symm dimension
+        # For 2d symmetrization, make a copy of the value for the first symm dimension
         # and insert it after this dim in the rescale array
         if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescale_val[self.symm_dims[0]]
@@ -370,7 +370,7 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         """
         rescale_val = rescale_factors_alpha[:-1]
         alpha_val = rescale_factors_alpha[-1]
-        # For 2-dim symmetrization, make another copy of the value for the first symm dimension
+        # For 2d symmetrization, make a copy of the value for the first symm dimension
         # and insert it after this dim in the rescale array
         if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescale_val[self.symm_dims[0]]
@@ -424,7 +424,7 @@ class KDERescaleOptimization(AdaptiveBwKDE):
         # Insert alpha at the end of the array
         initial_choices = np.insert(init_rescale, init_rescale.size, init_alpha)
 
-        # For 2-dim symmetrization, check that the dimensions are treated the same and 
+        # For 2d symmetrization, check that the dimensions are treated the same and 
         # then remove one of them from the opt parameters
         if self.symm_dims is not None and len(self.symm_dims) == 2:
             firstdim = self.symm_dims[0]; secondim = self.symm_dims[1]
@@ -451,7 +451,7 @@ class KDERescaleOptimization(AdaptiveBwKDE):
 
         # Set instance KDE parameters from the optimized results
         rescales = result.x[:-1]
-        # For 2-dim symmetrization: copy the rescale value from first dim to second
+        # For 2d symmetrization, copy the rescale value from first dim to second
         if self.symm_dims is not None and len(self.symm_dims) == 2:
             val_to_copy = rescales[firstdim]
             rescales = np.insert(rescales, secondim, val_to_copy)
