@@ -2,8 +2,7 @@
 Population inference via density estimation.
 A small Python library (pop-de) for estimating a probability density from data samples using Kernel Density Estimation (KDE), built for multi-dimensional problems like gravitational-wave population inference.
 
-# The core idea in three layers:
-
+The core idea in three layers:
 The base classes (density_estimate.py) fit a standard KDE — you give it your data points and it estimates a smooth density. SimpleKernelDensityEstimation uses scipy; VariableBwKDEPy uses KDEpy and, importantly, allows a different bandwidth for every data point.
 
 On top of that, AdaptiveBwKDE (adaptive_kde.py) makes the KDE adaptive: it first fits a rough "pilot" density, then gives each point a bandwidth that's narrow in dense regions and wide in sparse regions, so it captures sharp peaks and smooth tails at the same time. A single parameter alpha controls how strongly it adapts (alpha=0 = ordinary fixed-bandwidth KDE).
